@@ -455,7 +455,7 @@ class CLIP(nn.Module):
         text_features   = self.encode_text(text,mix_text)
 
         if dual_mix > 0:
-            rand_matrix = torch.randn(768,512).cuda().half()
+            rand_matrix = torch.randn(768,512).half()
             image_rand_projected = image_features.detach() @ rand_matrix
 
             text_features = dual_mix*text_features + (1.0-dual_mix)*image_rand_projected
