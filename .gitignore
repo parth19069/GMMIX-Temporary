@@ -1,0 +1,8 @@
+data/modified_data
+data/original_data
+log
+wandb
+data/
+__pycache__/
+*.pyc
+*.pt
