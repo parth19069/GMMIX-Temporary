@@ -1089,12 +1089,12 @@ if args.noclip :
     img_encoder = ImageEncoder()
     txt_encoder = TextEncoder()
 
-    clip_model = CLIPModel(img_encoder, txt_encoder, 2048, 768,256).cuda()
+    clip_model = CLIPModel(img_encoder, txt_encoder, 2048, 768,256).to(device)
 
 if args.noclip and args.albef :
     import ruamel.yaml as yaml
     config = yaml.load(open('Retrieval_flickr.yaml', 'r'), Loader=yaml.Loader)
-    clip_model = ALBEF(config=config).cuda()
+    clip_model = ALBEF(config=config).to(device)
     checkpoint = torch.load("ALBEF_4M.pth", map_location='cpu')
     state_dict = checkpoint['model']
 
