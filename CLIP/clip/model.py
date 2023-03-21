@@ -417,6 +417,7 @@ class CLIP(nn.Module):
     def encode_text(self, text,mix_lamb=-1):
         bs = text.shape[0]
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx - n_prp, d_model]
+        print(x.shape)
         #print("SHAPES " x[:,0:1,:].shape , x[:1
         x = torch.cat(
               (
