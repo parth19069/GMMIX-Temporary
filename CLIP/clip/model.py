@@ -244,7 +244,7 @@ class Transformer(nn.Module):
         super().__init__()
         self.width = width
         self.layers = layers
-        self.layers_arr = [ResidualAttentionBlock(width, heads, attn_mask) for _ in range(layers)]
+        self.layers_arr = nn.ModuleList([ResidualAttentionBlock(width, heads, attn_mask) for _ in range(layers)])
         self.resblocks = nn.Sequential(*self.layers_arr) #How can i add mix-logic in Sequential????
 
     def forward(self, x: torch.Tensor, lamb=-1):
