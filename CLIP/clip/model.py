@@ -455,7 +455,7 @@ class CLIP(nn.Module):
         text_features   = self.encode_text(text,mix_text)
 
         if dual_mix > 0:
-            rand_matrix = torch.randn(768,512).half()
+            rand_matrix = torch.randn(768,512)
             image_rand_projected = image_features.detach() @ rand_matrix
 
             text_features = dual_mix*text_features + (1.0-dual_mix)*image_rand_projected
@@ -512,30 +512,30 @@ def convert_weights(model: nn.Module):
 
     def _convert_weights_to_fp16(l):
         if isinstance(l, (nn.Conv1d, nn.Conv2d, nn.Linear)):
-            l.weight.data = l.weight.data.half()
+            l.weight.data = l.weight.data
             if l.bias is not None:
-                l.bias.data = l.bias.data.half()
+                l.bias.data = l.bias.data
 
         if isinstance(l, nn.MultiheadAttention):
             for attr in [*[f"{s}_proj_weight" for s in ["in", "q", "k", "v"]], "in_proj_bias", "bias_k", "bias_v"]:
                 tensor = getattr(l, attr)
                 if tensor is not None:
-                    tensor.data = tensor.data.half()
+                    tensor.data = tensor.data
 
         for name in ["text_projection","text_projection_mix", "proj","shared_projection1","shared_projection2", "text_bias","proj_bias","fc1","fc2","fc3","prompts_weights"]:
             if hasattr(l, name):
                 attr = getattr(l, name)
                 if attr is not None:
-                    attr.data = attr.data.half()
+                    attr.data = attr.data
 
 
         for name in ["img_head","txt_head"]:
             if hasattr(l, name):
                 attr = getattr(l, name)
                 if attr is not None:
-                    attr.projection.weight.data = attr.projection.weight.data.half()
+                    attr.projection.weight.data = attr.projection.weight.data
                     if attr.projection.bias is not None :
-                        attr.projection.bias.data = attr.projection.bias.data.half()
+                        attr.projection.bias.data = attr.projection.bias.data
 
 
     model.apply(_convert_weights_to_fp16)
