@@ -169,13 +169,13 @@ class ResidualAttentionBlock(nn.Module):
         super().__init__()
 
         self.attn = nn.MultiheadAttention(d_model, n_head)
-        self.ln_1 = LayerNorm(d_model)
+        self.ln_1 = nn.LayerNorm(d_model)
         self.mlp = nn.Sequential(OrderedDict([
             ("c_fc", nn.Linear(d_model, d_model * 4)),
             ("gelu", QuickGELU()),
             ("c_proj", nn.Linear(d_model * 4, d_model))
         ]))
-        self.ln_2 = LayerNorm(d_model)
+        self.ln_2 = nn.LayerNorm(d_model)
         self.attn_mask = attn_mask
 
     def attention(self, x: torch.Tensor):
@@ -267,11 +267,11 @@ class VisionTransformer(nn.Module):
         scale = width ** -0.5
         self.class_embedding = nn.Parameter(scale * torch.randn(width))
         self.positional_embedding = nn.Parameter(scale * torch.randn((input_resolution // patch_size) ** 2 + 1, width))
-        self.ln_pre = LayerNorm(width)
+        self.ln_pre = nn.LayerNorm(width)
 
         self.transformer = Transformer(width, layers, heads)
 
-        self.ln_post = LayerNorm(width)
+        self.ln_post = nn.LayerNorm(width)
         self.proj = nn.Parameter(scale * torch.randn(width, output_dim))
 
 
@@ -347,7 +347,7 @@ class CLIP(nn.Module):
         self.vocab_size = vocab_size
         self.token_embedding = nn.Embedding(vocab_size, transformer_width)
         self.positional_embedding = nn.Parameter(torch.empty(self.context_length, transformer_width))
-        self.ln_final = LayerNorm(transformer_width)
+        self.ln_final = nn.LayerNorm(transformer_width)
 
         ### PROMPTS !! ###
         self.prompts_weights = nn.Parameter(torch.randn((prompts_length, transformer_width))/50)
