@@ -344,7 +344,7 @@ class CLIP(nn.Module):
             attn_mask=self.build_attention_mask()
         )
 
-        self.vocab_size = vocab_size
+        # self.vocab_size = vocab_size
         self.token_embedding = nn.Embedding(vocab_size, transformer_width)
         self.positional_embedding = nn.Parameter(torch.empty(self.context_length, transformer_width))
         self.ln_final = LayerNorm(transformer_width)
