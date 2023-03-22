@@ -9,7 +9,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--startlr',type=float,default=7e-6,help="initial learning rate")
 parser.add_argument('--lr',type=float,default=1e-6,help="initial learning rate")
-parser.add_argument('--classifier_lr', type=float,default=1e-6,help="classifier initial learning rate")
+parser.add_argument('--classifier_lr', type=float,default=1e-4,help="classifier initial learning rate")
 parser.add_argument('--bs',type=int,default=16,help="Batch size")
 parser.add_argument('--epoch',type=int,default=10,help="Epoch")
 parser.add_argument('--group',  help="run Group",default="SWSW")
