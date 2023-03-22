@@ -811,6 +811,7 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
                 # print(f'Before tokenization shape: {temp_text}')
             except (IndexError, AssertionError) as e:
                 print("txt-continue")
+                print(e)
                 continue
             
             images      = images.to(device)
