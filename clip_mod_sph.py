@@ -1162,8 +1162,8 @@ elif args.dataset == "coco" :
     testset     = COCODataset('/data/coco/images/val2017',anon_path='/data/coco/images/annotations/captions_val2017.json',transform=preprocess)
 
 if args.dataset == "nft":
-    trainset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/half_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess).filter_df("train")
-    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/half_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess).filter_df("test")
+    trainset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess).filter_df("train")
+    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess).filter_df("test")
     # validset = 
 
 

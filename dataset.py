@@ -104,7 +104,7 @@ class NFTDataset(torch.utils.data.Dataset):
         print("Init dataset")
         self.folder_path = folder_path
         self.transactions_df = pd.read_csv(os.path.join(self.folder_path, 'sorted_price_movement.csv'))
-        self.tweets_data = pd.read_csv(os.path.join(self.folder_path, 'sorted_tweet_data_half.csv')).dropna(axis=0)
+        self.tweets_data = pd.read_csv(os.path.join(self.folder_path, 'final_tweet_data_full.csv')).dropna(axis=0)
         self.images_path = os.path.join(image_folder_path, 'images')
         self.image_lookback = image_lookback
         self.tweet_lookback = tweet_lookback
@@ -167,20 +167,16 @@ class NFTDataset(torch.utils.data.Dataset):
                         break
             else:
                 break
-        
-        # # print(f"len img: {len(images)}, len tweets: {len(tweets_text)}")
-        
-        # images = images[:self.image_lookback//2]
-        # tweets_text = tweets_text[:self.tweet_lookback//2]
         return images, tweets_text, transaction_item['label']
         
     def filter_df(self, name):
-        self.transactions_df = self.transactions_df[self.transactions_df['type'] == name]
         
+        self.transactions_df = self.transactions_df[self.transactions_df['type'] == name]
+        self.tweets_data = self.tweets_data[self.tweets_data['type'] == name]
+
         projects, counts = np.unique(self.transactions_df['project'].to_numpy(), return_counts=True)
         transactions_dfs = []
         for proj in projects:
-        #     # print(proj)
             project_transactions = self.transactions_df[self.transactions_df['project'] == proj]
             project_transactions = project_transactions.sort_values(by='block_timestamp')
             transactions_dfs.append(project_transactions)
