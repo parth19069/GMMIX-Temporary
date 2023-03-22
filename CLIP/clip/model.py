@@ -418,7 +418,6 @@ class CLIP(nn.Module):
         bs = text.shape[0]
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx - n_prp, d_model]
         #print("SHAPES " x[:,0:1,:].shape , x[:1
-        print(self.prompts_weights.shape)
         x = torch.cat(
               (
                 x[:,0:1,:], #[SOS]
