@@ -160,14 +160,16 @@ class NFTDataset(torch.utils.data.Dataset):
                 image_ids_list = ast.literal_eval(token_ids_list)
                 for image_id in image_ids_list:
                     img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
-                    if self.verbose:
-                        print(img_name)
+
                     if os.path.exists(os.path.join(self.images_path, img_name)):
                         img = Image.open(os.path.join(self.images_path, img_name))
                         img = self.transform(img)
                         images.append(torch.Tensor(img))
                         num_images += 1
                         break
+                    else:
+                        if self.verbose:
+                            print(img_name)
             else:
                 break
         return images, tweets_text, transaction_item['label']
