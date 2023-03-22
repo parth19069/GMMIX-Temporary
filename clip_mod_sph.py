@@ -431,7 +431,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 
                 
         temp_num_iters += 1
-        if(temp_num_iters > 10):
+        if(temp_num_iters > 2):
             print("100 iters done...moving forward")
             break
         print("done this iteration")      
@@ -1165,7 +1165,7 @@ elif args.dataset == "coco" :
 
 if args.dataset == "nft":
     trainset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess).filter_df("train")
-    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess).filter_df("test")
+    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=5, tweet_lookback=5, transform=preprocess, verbose=True).filter_df("test")
     # validset = 
 
 

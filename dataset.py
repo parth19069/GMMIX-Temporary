@@ -100,8 +100,9 @@ class CIFAR100Dataset(torch.utils.data.Dataset):
 
 
 class NFTDataset(torch.utils.data.Dataset):
-    def __init__(self, folder_path, image_folder_path, image_lookback, tweet_lookback, transform=None):
+    def __init__(self, folder_path, image_folder_path, image_lookback, tweet_lookback, transform=None, verbose=False):
         print("Init dataset")
+        self.verbose = verbose
         self.folder_path = folder_path
         self.transactions_df = pd.read_csv(os.path.join(self.folder_path, 'sorted_price_movement.csv'))
         self.tweets_data = pd.read_csv(os.path.join(self.folder_path, 'final_tweet_data_full.csv')).dropna(axis=0)
@@ -159,6 +160,8 @@ class NFTDataset(torch.utils.data.Dataset):
                 image_ids_list = ast.literal_eval(token_ids_list)
                 for image_id in image_ids_list:
                     img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
+                    if self.verbose:
+                        print(img_name)
                     if os.path.exists(os.path.join(self.images_path, img_name)):
                         img = Image.open(os.path.join(self.images_path, img_name))
                         img = self.transform(img)
