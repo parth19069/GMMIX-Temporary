@@ -609,7 +609,7 @@ def do_valid(validloader,clip_model,optimizer,args,run_calib=True,wandb_prefix="
         img_stacks = []
         txt_stacks = []
 
-        for batch_idx, sample in tqdm(enumerate(validloader)):
+        for batch_idx, sample in enumerate(tqdm(validloader)):
             images, text_tok, labels = sample
             captions=text_tok
             
