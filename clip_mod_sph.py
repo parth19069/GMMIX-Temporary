@@ -798,6 +798,7 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
                 images = torch.stack((temp_img))
             except (IndexError, AssertionError) as e:
                 print("img-continue")
+                print(e)
                 continue
         # print(f"temp image shape : {temp_img.shape}")
         # bs, img_lb = temp_img.shape
@@ -1213,7 +1214,7 @@ for epoch in range(wandb.config.epoch):
     do_train(trainloader,clip_model,optimizer,epoch=epoch,args=args, classification_model=nft_classification_model, classification_optimizer=nft_classification_optimizer)
     print("-------------- Training done -------------------")
     # current_best_val,I2T,T2I,R1Sum = do_valid(testloader,clip_model,optimizer,args=args,epoch=epoch)
-    do_classifier_test(trainloader,clip_model,optimizer, args=args,classifier_model=nft_classification_model, epoch=epoch)
+    do_classifier_test(testloader,clip_model,optimizer, args=args,classifier_model=nft_classification_model, epoch=epoch)
 
     if R1Sum > Best_R1_sum:
         Best_R1_sum = R1Sum
