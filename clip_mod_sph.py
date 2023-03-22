@@ -110,6 +110,7 @@ from loss import *
 
 import pandas as pd
 from tqdm import tqdm
+from sklearn.metrics import matthews_corrcoef, f1_score, recall_score, precision_score
 
 torch.cuda.empty_cache()
 
@@ -851,10 +852,17 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
         
         pred_list = pred_list.detach().cpu().numpy()
         y_true = y_true.detach().cpu().numpy()
+
+        m_corr = matthews_corrcoef(y_true, pred_list)
+        precision = precision_score(y_true, pred_list)
+        recall = recall_score(y_true, pred_list)
         
         print(f"type, len : {type(y_true)}, {y_true.shape}")
         final_acc = (y_true == pred_list).sum() / len(y_true)
         print(f"Accuracy : {final_acc}")
+        print(f"m_corr = {m_corr}")
+        print(f"precision = {precision}")
+        print(f"recall = {recall}")
             
             
             
