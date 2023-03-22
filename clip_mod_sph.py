@@ -431,7 +431,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 
                 
         temp_num_iters += 1
-        if(temp_num_iters > 100):
+        if(temp_num_iters > 10):
             print("100 iters done...moving forward")
             break
         print("done this iteration")      
