@@ -146,7 +146,7 @@ class NFTDataset(torch.utils.data.Dataset):
         project_transactions = self.grouped_and_sorted_transactions_df[self.grouped_and_sorted_transactions_df['project'] == project]
         bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
         # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
-        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['token_ids']
+        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
         
         # project_transactions = self.transactions_df[self.transactions_df['project'] == project].sort_values(by='block_timestamp')
         # bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)

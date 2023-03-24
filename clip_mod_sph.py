@@ -1224,18 +1224,22 @@ for epoch in range(wandb.config.epoch):
     # current_best_val,I2T,T2I,R1Sum = do_valid(testloader,clip_model,optimizer,args=args,epoch=epoch)
     do_classifier_test(testloader,clip_model,optimizer, args=args,classifier_model=nft_classification_model, epoch=epoch)
 
-    if R1Sum > Best_R1_sum:
-        Best_R1_sum = R1Sum
-    wandb.log(I2T)
-    wandb.log(T2I)
-    wandb.log({"R1_Sum":R1Sum})
+    # if R1Sum > Best_R1_sum:
+    #     Best_R1_sum = R1Sum
+    # wandb.log(I2T)
+    # wandb.log(T2I)
+    # wandb.log({"R1_Sum":R1Sum})
     
     scheduler.step()
 wandb.log({"Best_R1_Sum" : Best_R1_sum})
 
+# torch.save(nft_classification_model.state_dict(), "/scratch/puneetm2/data/models/nft_classification_model.pt")
+
 torch.save({
         'model_state_dict': clip_model.state_dict(),
     }, f"clip_mod_sph_weight.pt") #just change to your preferred folder/filename
+
+torch.save(nft_classification_model.state_dict(), "/scratch/puneetm2/data/models/nft_classification_model.pt")
 
 
 
