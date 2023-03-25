@@ -434,9 +434,9 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 
                 
         temp_num_iters += 1
-        # if(temp_num_iters > 2):
-        #     print("2 iters done...moving forward")
-        #     break
+        if(temp_num_iters > 2):
+            print("2 iters done...moving forward")
+            break
         print("done this iteration")      
         # break
             #loss += wandb.config.gamma*calc_mix_loss(img_embed_mix_d, txt_embed_mix_d, lamb1*lamb2, (1-lamb1)*(1-lamb2))
