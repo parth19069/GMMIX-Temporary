@@ -775,8 +775,8 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
     clip_model = nn.DataParallel(clip_model).to(device)
     classifier_model = nn.DataParallel(classifier_model).to(device)
     
-    clip_model.eval()
-    classifier_model.eval()
+    # clip_model.eval()
+    # classifier_model.eval()
     #convert_models_to_fp32(clip_model) #! evaluation at fp32
 
     for p in clip_model.parameters():
