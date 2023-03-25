@@ -841,9 +841,9 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
             # test_loss += torch.nn.functional.cross_entropy(y_preds, target).item()
             # correct += y_preds.eq(target.view_as(pred)).sum().item()
             iters += 1
-            # if(iters > 100):
-            #     print("------------- 10 iters testing done ----------------")
-            #     break
+            if(iters > 10):
+                print("------------- 10 iters testing done ----------------")
+                break
         # test_loss /= len(validloader.dataset)
         pred_list = torch.cat(price_movement_preds)
         y_true = torch.cat(y_true)
