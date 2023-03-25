@@ -104,7 +104,7 @@ class NFTDataset(torch.utils.data.Dataset):
         print("Init dataset")
         self.verbose = verbose
         self.folder_path = folder_path
-        self.transactions_df = pd.read_csv(os.path.join(self.folder_path, 'sorted_price_movement.csv'))
+        self.transactions_df = pd.read_csv(os.path.join(self.folder_path, 'filtered_transactions.csv'))
         self.tweets_data = pd.read_csv(os.path.join(self.folder_path, 'final_tweet_data_full.csv')).dropna(axis=0)
         self.images_path = os.path.join(image_folder_path, 'images')
         self.image_lookback = image_lookback
