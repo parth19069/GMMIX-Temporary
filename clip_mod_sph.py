@@ -772,8 +772,8 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
     print("Validating...")
     print(len(validloader))
     
-    # clip_model = nn.DataParallel(clip_model).to(device)
-    # classifier_model = nn.DataParallel(classifier_model).to(device)
+    clip_model = nn.DataParallel(clip_model).to(device)
+    classifier_model = nn.DataParallel(classifier_model).to(device)
     
     clip_model.eval()
     classifier_model.eval()
@@ -793,7 +793,7 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
         y_true = []
         test_loss = 0
         iters = 0
-        for batch_idx, sample in tqdm(enumerate(validloader)):
+        for batch_idx, sample in enumerate(tqdm(validloader)):
             images, text_tok, labels = sample
             captions=text_tok
             target = torch.tensor(labels).to(device)
