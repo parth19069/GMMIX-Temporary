@@ -771,6 +771,10 @@ def do_valid(validloader,clip_model,optimizer,args,run_calib=True,wandb_prefix="
 def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, run_calib=True,wandb_prefix="",epoch=0):
     print("Validating...")
     print(len(validloader))
+    
+    clip_model = nn.DataParallel(clip_model).to(device)
+    classifier_model = nn.DataParallel(classifier_model).to(device)
+    
     clip_model.eval()
     classifier_model.eval()
     #convert_models_to_fp32(clip_model) #! evaluation at fp32
