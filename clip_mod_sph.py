@@ -1179,7 +1179,7 @@ elif args.dataset == "coco" :
 
 if args.dataset == "nft":
     trainset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess).filter_df("train")
-    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess, verbose=True).filter_df("test")
+    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess).filter_df("test")
     # validset = 
 
 
