@@ -110,6 +110,7 @@ class NFTDataset(torch.utils.data.Dataset):
         self.images_path = os.path.join(image_folder_path, 'images')
         self.image_lookback = image_lookback
         self.tweet_lookback = tweet_lookback
+        self.images_tensor = torch.load('/scratch/puneetm2/data/nft_data/full_tweet_data/all_images_tensor.pt')
         self.project_mapping = {'CyberKongz':'KONGZ', 
                                 'CrypToadz by GREMPLIN': 'TOADZ',
                                 'Loot': 'LOOT',
@@ -147,33 +148,51 @@ class NFTDataset(torch.utils.data.Dataset):
         project_transactions = self.grouped_and_sorted_transactions_df[self.grouped_and_sorted_transactions_df['project'] == project]
         bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
         # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
-        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
+        # all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
+        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]
         
         # project_transactions = self.transactions_df[self.transactions_df['project'] == project].sort_values(by='block_timestamp')
         # bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
         # # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
         # all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['token_ids']
         
+        
         images = []
         num_images = 0
-        # start_time = time.time()
-        for token_ids_list in all_previous_transactions_list[::-1]:
+        for transaction in all_previous_transactions_list[::-1]:
             if(num_images < self.image_lookback):
-                image_ids_list = ast.literal_eval(token_ids_list)
-                for image_id in image_ids_list:
-                    img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
-
-                    if os.path.exists(os.path.join(self.images_path, img_name)):
-                        img = Image.open(os.path.join(self.images_path, img_name))
-                        img = self.transform(img)
-                        images.append(torch.Tensor(img))
-                        num_images += 1
-                        break
-                    else:
-                        if self.verbose:
-                            print(img_name)
+                image_tensor_idx = transaction['img_tensor_idx']
+                img = self.images_tensor[image_tensor_idx]
+                images.append(img)
+                num_images += 1
             else:
                 break
+        
+        
+        
+        
+        # images = []
+        # num_images = 0
+        # # start_time = time.time()
+        # for token_ids_list in all_previous_transactions_list[::-1]:
+        #     if(num_images < self.image_lookback):
+        #         image_ids_list = ast.literal_eval(token_ids_list)
+        #         for image_id in image_ids_list:
+        #             img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
+
+        #             if os.path.exists(os.path.join(self.images_path, img_name)):
+        #                 img = Image.open(os.path.join(self.images_path, img_name))
+        #                 img = self.transform(img)
+        #                 images.append(torch.Tensor(img))
+        #                 num_images += 1
+        #                 break
+        #             else:
+        #                 if self.verbose:
+        #                     print(img_name)
+        #     else:
+        #         break
+        
+        
         # end_time = time.time()
         # print(f"\nTime taken to load image = {end_time - start_time}\n")
         return images, tweets_text, transaction_item['label']
