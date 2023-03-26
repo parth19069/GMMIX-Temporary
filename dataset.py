@@ -148,8 +148,8 @@ class NFTDataset(torch.utils.data.Dataset):
         project_transactions = self.grouped_and_sorted_transactions_df[self.grouped_and_sorted_transactions_df['project'] == project]
         bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
         # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
-        # all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
-        all_previous_transactions_list = project_transactions.iloc[:bisect_idx_transactions]
+        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
+        # all_previous_transactions_list = project_transactions.iloc[:bisect_idx_transactions]
         # print(f"\nGropued shape : {self.grouped_and_sorted_transactions_df.shape}, proj = {project_transactions.shape}")
         # print(all_previous_transactions_list.shape)
         # project_transactions = self.transactions_df[self.transactions_df['project'] == project].sort_values(by='block_timestamp')
@@ -158,43 +158,43 @@ class NFTDataset(torch.utils.data.Dataset):
         # all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['token_ids']
         
         
-        images = []
-        num_images = 0
-        for t_idx, transaction in all_previous_transactions_list.iloc[::-1].iterrows():
-            if(num_images < self.image_lookback):
-                # print(transaction)
-                # print(transaction['img_tensor_index'], type(transaction['img_tensor_index']))
-                image_tensor_idx = int(transaction['img_tensor_index'])
-                img = self.images_tensor[image_tensor_idx]
-                # print(f"Image shape : {img.shape}")
-                images.append(img)
-                num_images += 1
-            else:
-                break
+        # images = []
+        # num_images = 0
+        # for t_idx, transaction in all_previous_transactions_list.iloc[::-1].iterrows():
+        #     if(num_images < self.image_lookback):
+        #         # print(transaction)
+        #         # print(transaction['img_tensor_index'], type(transaction['img_tensor_index']))
+        #         image_tensor_idx = int(transaction['img_tensor_index'])
+        #         img = self.images_tensor[image_tensor_idx]
+        #         # print(f"Image shape : {img.shape}")
+        #         images.append(img)
+        #         num_images += 1
+        #     else:
+        #         break
         
         
         # print(f"Image list length : {len(images)}")
         
-        # images = []
-        # num_images = 0
-        # # start_time = time.time()
-        # for token_ids_list in all_previous_transactions_list[::-1]:
-        #     if(num_images < self.image_lookback):
-        #         image_ids_list = ast.literal_eval(token_ids_list)
-        #         for image_id in image_ids_list:
-        #             img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
+        images = []
+        num_images = 0
+        # start_time = time.time()
+        for token_ids_list in all_previous_transactions_list[::-1]:
+            if(num_images < self.image_lookback):
+                image_ids_list = ast.literal_eval(token_ids_list)
+                for image_id in image_ids_list:
+                    img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
 
-        #             if os.path.exists(os.path.join(self.images_path, img_name)):
-        #                 img = Image.open(os.path.join(self.images_path, img_name))
-        #                 img = self.transform(img)
-        #                 images.append(torch.Tensor(img))
-        #                 num_images += 1
-        #                 break
-        #             else:
-        #                 if self.verbose:
-        #                     print(img_name)
-        #     else:
-        #         break
+                    if os.path.exists(os.path.join(self.images_path, img_name)):
+                        img = Image.open(os.path.join(self.images_path, img_name))
+                        img = self.transform(img)
+                        images.append(torch.Tensor(img))
+                        num_images += 1
+                        break
+                    else:
+                        if self.verbose:
+                            print(img_name)
+            else:
+                break
         
         
         # end_time = time.time()
