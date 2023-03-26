@@ -166,13 +166,14 @@ class NFTDataset(torch.utils.data.Dataset):
                 print(transaction['img_tensor_index'], type(transaction['img_tensor_index']))
                 image_tensor_idx = int(transaction['img_tensor_index'])
                 img = self.images_tensor[image_tensor_idx]
+                print(f"Image shape : {img.shape}")
                 images.append(img)
                 num_images += 1
             else:
                 break
         
         
-        
+        print(f"Image list length : {len(images)}")
         
         # images = []
         # num_images = 0
