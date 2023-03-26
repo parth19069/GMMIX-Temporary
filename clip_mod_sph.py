@@ -172,9 +172,9 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
     clip_model = nn.DataParallel(clip_model).to(device)
     classification_model = nn.DataParallel(classification_model).to(device)
     for batch_idx,sample in enumerate(tqdm(trainloader)):
-        if batch_idx == 0:
-            end_time = time.time()
-            print(f'Time taken to load batch: {end_time - start_time}')
+        # if batch_idx == 0:
+        end_time = time.time()
+        print(f'Time taken to load batch: {end_time - start_time}')
         print("Inside batch")
         images, text_tok, labels    = sample
         # print(f"len sample : {len(sample)}")
@@ -226,9 +226,9 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
         # print(f'Text tokens = {text_tok}')
         _, _,image_features,text_features = clip_model(images,text_tok)
         
-        print(type(image_features), type(text_features))
-        print(image_features.shape)
-        print(text_features.shape)
+        # print(type(image_features), type(text_features))
+        # print(image_features.shape)
+        # print(text_features.shape)
         
         image_features = image_features.reshape((args.bs, args.img_lookback, 512))
         text_features = text_features.reshape((args.bs, args.text_lookback, 512))
@@ -434,9 +434,9 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 
                 
         temp_num_iters += 1
-        if(temp_num_iters > 2):
-            print("2 iters done...moving forward")
-            break
+        # if(temp_num_iters > 2):
+        #     print("2 iters done...moving forward")
+        #     break
         print("done this iteration")      
         # break
             #loss += wandb.config.gamma*calc_mix_loss(img_embed_mix_d, txt_embed_mix_d, lamb1*lamb2, (1-lamb1)*(1-lamb2))
@@ -486,7 +486,8 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
             # convert_weights(classification_model)
         end_time = time.time()
         print(f'Time taken to finish an iteration: {end_time - start_time}')
-        print(f"done training")
+        print(f"done iteration training")
+        start_time = time.time()
 
 
 
@@ -847,9 +848,9 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
             # test_loss += torch.nn.functional.cross_entropy(y_preds, target).item()
             # correct += y_preds.eq(target.view_as(pred)).sum().item()
             iters += 1
-            if(iters > 2):
-                print("------------- 10 iters testing done ----------------")
-                break
+            # if(iters > 2):
+            #     print("------------- 10 iters testing done ----------------")
+            #     break
         # test_loss /= len(validloader.dataset)
         pred_list = torch.cat(price_movement_preds)
         y_true = torch.cat(y_true)
