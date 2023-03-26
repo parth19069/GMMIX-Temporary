@@ -224,6 +224,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
 
         #Inference
         # print(f'Text tokens = {text_tok}')
+        print(f"Image shape : {images.shape}")
         _, _,image_features,text_features = clip_model(images,text_tok)
         
         # print(type(image_features), type(text_features))
