@@ -156,7 +156,7 @@ class NFTDataset(torch.utils.data.Dataset):
         
         images = []
         num_images = 0
-        start_time = time.time()
+        # start_time = time.time()
         for token_ids_list in all_previous_transactions_list[::-1]:
             if(num_images < self.image_lookback):
                 image_ids_list = ast.literal_eval(token_ids_list)
@@ -174,8 +174,8 @@ class NFTDataset(torch.utils.data.Dataset):
                             print(img_name)
             else:
                 break
-        end_time = time.time()
-        print(f"\nTime taken to load image = {end_time - start_time}\n")
+        # end_time = time.time()
+        # print(f"\nTime taken to load image = {end_time - start_time}\n")
         return images, tweets_text, transaction_item['label']
         
     def filter_df(self, name):

@@ -174,7 +174,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
     for batch_idx,sample in enumerate(tqdm(trainloader)):
         # if batch_idx == 0:
         end_time = time.time()
-        print(f'Time taken to load batch: {end_time - start_time}')
+        print(f'\nTime taken to load batch: {end_time - start_time}')
         print("Inside batch")
         images, text_tok, labels    = sample
         # print(f"len sample : {len(sample)}")
