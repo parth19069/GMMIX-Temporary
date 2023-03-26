@@ -1187,10 +1187,10 @@ if args.dataset == "nft":
 
 
 
-trainloader = DataLoader(trainset, batch_size= wandb.config.bs, collate_fn=custom_collate, shuffle=False)
+trainloader = DataLoader(trainset, batch_size= wandb.config.bs, collate_fn=custom_collate, shuffle=False, drop_last=True)
 print("length of train set : " , len(trainset))
 # validloader = DataLoader(validset, batch_size= wandb.config.bs, shuffle=False)
-testloader  = DataLoader(testset, batch_size= wandb.config.bs, collate_fn=custom_collate, shuffle=False)
+testloader  = DataLoader(testset, batch_size= wandb.config.bs, collate_fn=custom_collate, shuffle=False, drop_last=True)
 testloader2  = DataLoader(testset, batch_size= 128, collate_fn=custom_collate, shuffle=False)
 
 
