@@ -822,6 +822,8 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
                 print(e)
                 continue
             
+            if len(captions) != args.bs : break #Drop Last batch
+            
             images      = images.to(device)
             #print(images.min() , images.max())
             # images      += args.noise*torch.randn(images.shape).to(device)
