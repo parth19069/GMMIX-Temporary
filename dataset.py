@@ -163,8 +163,8 @@ class NFTDataset(torch.utils.data.Dataset):
         for t_idx, transaction in all_previous_transactions_list.iloc[::-1].iterrows():
             if(num_images < self.image_lookback):
                 # print(transaction)
-                print(transaction['img_tensor_idx'], type(transaction['img_tensor_idx']))
-                image_tensor_idx = int(transaction['img_tensor_idx'])
+                print(transaction['img_tensor_index'], type(transaction['img_tensor_index']))
+                image_tensor_idx = int(transaction['img_tensor_index'])
                 img = self.images_tensor[image_tensor_idx]
                 images.append(img)
                 num_images += 1
