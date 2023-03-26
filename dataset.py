@@ -149,9 +149,9 @@ class NFTDataset(torch.utils.data.Dataset):
         bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
         # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
         # all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
-        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]
+        all_previous_transactions_list = project_transactions.iloc[:bisect_idx_transactions]
         print(f"\nGropued shape : {self.grouped_and_sorted_transactions_df.shape}, proj = {project_transactions.shape}")
-        print(all_previous_transactions_list)
+        print(all_previous_transactions_list.shape)
         # project_transactions = self.transactions_df[self.transactions_df['project'] == project].sort_values(by='block_timestamp')
         # bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
         # # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
@@ -160,9 +160,9 @@ class NFTDataset(torch.utils.data.Dataset):
         
         images = []
         num_images = 0
-        for transaction in all_previous_transactions_list[::-1]:
+        for t_idx, transaction in all_previous_transactions_list.iloc[::-1].iterrows():
             if(num_images < self.image_lookback):
-                print(transaction)
+                # print(transaction)
                 print(transaction['img_tensor_idx'], type(transaction['img_tensor_idx']))
                 image_tensor_idx = int(transaction['img_tensor_idx'])
                 img = self.images_tensor[image_tensor_idx]
