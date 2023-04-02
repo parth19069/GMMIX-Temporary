@@ -170,10 +170,10 @@ class NFTDataset(torch.utils.data.Dataset):
             images_trans = transactions_tmp['valid_token_img'].to_list()
             for i in range(pad_len):
                 images_trans.append(list_token_img[0])
-        print(images_trans)
+        # print(images_trans)
         images = []
         for image_name in images_trans:
-            print(f"Image name = {image_name}")
+            # print(f"Image name = {image_name}")
             img = Image.open(os.path.join(self.images_path, image_name))
             img = self.transform(img)
             images.append(torch.Tensor(img))
