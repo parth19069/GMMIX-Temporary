@@ -169,7 +169,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
     # beta = 0.1
 
     # train_loss_acc = 0
-    # train_loss_classification = 0
+    train_loss_classification = 0
     start_time = time.time()
     # clip_model = nn.DataParallel(clip_model).to(device)
     classification_model = nn.DataParallel(classification_model).to(device)
