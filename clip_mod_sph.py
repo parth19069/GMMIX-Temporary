@@ -431,9 +431,9 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 
                 
         temp_num_iters += 1
-        # if(temp_num_iters > 2):
-        #     print("2 iters done...moving forward")
-        #     break
+        if(temp_num_iters > 2):
+            print("2 iters done...moving forward")
+            break
         print("done this iteration")      
         # break
             #loss += wandb.config.gamma*calc_mix_loss(img_embed_mix_d, txt_embed_mix_d, lamb1*lamb2, (1-lamb1)*(1-lamb2))
@@ -792,7 +792,7 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
         test_loss = 0
         iters = 0
         for batch_idx, sample in enumerate(tqdm(validloader)):
-            images, text_tok, labels = sample
+            images, text_tok, metadata, labels = sample
             captions=text_tok
             target = torch.tensor(labels).to(device)
             print(f"labels shape : {target.shape}")
@@ -830,13 +830,15 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
             logits_per_image, logits_per_text, image_features, text_features = clip_model(images,text_tok)
             image_features = image_features.reshape((args.bs, args.img_lookback, 512))
             text_features = text_features.reshape((args.bs, args.text_lookback, 512))
+            metadata_features = (torch.Tensor(np.array(metadata)).reshape((args.bs, args.text_lookback, 1))).to(device)
 
             image_features = torch.mean(image_features, dim=1)
             text_features = torch.mean(text_features, dim=1)
+            metadata_features = torch.mean(metadata_features, dim=1)
             
             
             
-            input_representation = torch.cat([image_features, text_features], dim=1).to(device)
+            input_representation = torch.cat([image_features, text_features, metadata_features], dim=1).to(device)
             print(f"Input representation : {input_representation.shape}, {input_representation.dtype}")
             input_representation = input_representation.to(torch.float32)
             y_preds = classifier_model(input_representation)
@@ -845,9 +847,9 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
             # test_loss += torch.nn.functional.cross_entropy(y_preds, target).item()
             # correct += y_preds.eq(target.view_as(pred)).sum().item()
             iters += 1
-            # if(iters > 2):
-            #     print("------------- 2 iters testing done ----------------")
-            #     break
+            if(iters > 2):
+                print("------------- 2 iters testing done ----------------")
+                break
         # test_loss /= len(validloader.dataset)
         # threshold = torch.tensor([0.5])
         pred_list = torch.cat(price_movement_preds)
