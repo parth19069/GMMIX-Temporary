@@ -178,7 +178,8 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
         end_time = time.time()
         print(f'\nTime taken to load batch: {end_time - start_time}')
         print("Inside batch")
-        images, text_tok, metadata, labels    = sample
+        # images, text_tok, metadata, labels    = sample
+        images, text_tok, labels = sample
         captions=text_tok
         try:
             temp_img = np.array(images)
@@ -225,11 +226,11 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
         
         image_features = image_features.reshape((args.bs, args.img_lookback, 512))
         text_features = text_features.reshape((args.bs, args.text_lookback, 512))
-        metadata_features = (torch.Tensor(np.array(metadata)).reshape((args.bs, args.text_lookback, 1))).to(device)
+        # metadata_features = (torch.Tensor(np.array(metadata)).reshape((args.bs, args.text_lookback, 1))).to(device)
 
         image_features = torch.mean(image_features, dim=1)
         text_features = torch.mean(text_features, dim=1)
-        metadata_features = torch.mean(metadata_features, dim=1)
+        # metadata_features = torch.mean(metadata_features, dim=1)
         
         #compute Logit
         logits_per_image = image_features@text_features.T
@@ -420,7 +421,8 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
             if args.perform_classification:
                 # print("In classification")
                 # print(f"Shapes : img_features = {image_features.shape}, text_features = {text_features.shape}")
-                input_representation = torch.cat([image_features, text_features, metadata_features], dim=1).to(device)
+                # input_representation = torch.cat([image_features, text_features, metadata_features], dim=1).to(device)
+                input_representation = torch.cat([image_features, text_features], dim=1).to(device)
                 # print(input_representation.shape, input_representation.dtype)
                 input_representation = input_representation.to(torch.float32)
                 y_preds = classification_model(input_representation)
@@ -1117,7 +1119,7 @@ class CLIPModel(nn.Module):
 
 
 
-nft_classification_model = ClassificationHead(embedding_dim=512, metadata_dim=1, n_classes=2)
+nft_classification_model = ClassificationHead(embedding_dim=512, metadata_dim=0, n_classes=2)
 nft_classification_model.to(device)
 clip_model, preprocess = clip.load("ViT-B/32", device=device,jit=False,use_shared=wandb.config.shared, prompts_length = 0)
 #clip_model, preprocess = clip.load("RN50", device=device,jit=False,use_shared=wandb.config.shared)
@@ -1183,14 +1185,16 @@ def custom_collate(list_items):
     x = []
     y = []
     z = []
-    for w_, x_, y_, z_ in list_items:
+    # for w_, x_, y_, z_ in list_items:
+    for x_, y_, z_ in list_items:
     #  print(f'x_={x_}, y_={y_}')
-        w.append(w_)
+        # w.append(w_)
         x.append(x_)
         y.append(y_)
         z.append(z_)
-        
-    return w, x, y, z
+    
+    return x, y, z
+    # return w, x, y, z
 
 
 if args.dataset == "flickr" :
