@@ -439,15 +439,15 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
         # break
             #loss += wandb.config.gamma*calc_mix_loss(img_embed_mix_d, txt_embed_mix_d, lamb1*lamb2, (1-lamb1)*(1-lamb2))
         train_loss_acc += ( loss.item() + loss_mix.item())
-        train_loss_classification += loss_classification.item()
+        train_loss_classification += loss_classification
         wandb.log({"train_loss_iter" : loss.item()})
         wandb.log({"train_MIX_loss_iter" : loss_mix.item()})
         wandb.log({"logit_scale" : (1/clip_model.module.logit_scale.exp()).item()})
         wandb.log({"logit_scale2" : (1/clip_model.module.logit_scale2.exp()).item()})
-        wandb.log({"train_classifier_loss_iter" : loss_classification.item()})
+        wandb.log({"train_classifier_loss_iter" : loss_classification})
         
         print(f"Classification loss = {train_loss_classification / temp_num_iters}")
-        print(f"batch loss = {loss_classification.item()}")
+        print(f"batch loss = {loss_classification}")
         
         if args.method == 'imix':
             loss = loss_mix
