@@ -424,7 +424,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 # print(input_representation.shape, input_representation.dtype)
                 input_representation = input_representation.to(torch.float32)
                 y_preds = classification_model(input_representation)
-                loss_classification = torch.nn.functional.cross_entropy(y_preds, torch.tensor(labels).to(device))
+                loss_classification = torch.nn.functional.binary_cross_entropy(y_preds, torch.tensor(labels).to(device))
                 
                 
         temp_num_iters += 1
@@ -1027,17 +1027,27 @@ class TextEncoder(nn.Module):
 class ClassificationHead(nn.Module):
     def __init__(self, embedding_dim, n_classes):
         super(ClassificationHead, self).__init__()
-        self.hidden_layer = nn.Linear(2 * embedding_dim, 256)
-        self.output_layer = nn.Linear(256, n_classes)
-        self.softmax = nn.Softmax(dim=1)
+        self.input_layer = nn.Linear(2 * embedding_dim, 512)
+        self.hidden_layer_1 = nn.Linear(512, 256)
+        self.hidden_layer_2 = nn.Linear(256, 128)
+        self.hidden_layer_3 = nn.Linear(128, 64)
+        self.output_layer = nn.Linear(64, n_classes)
+        # self.softmax = nn.Softmax(dim=1)
+        self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
     
     def forward(self, x):
-        x = self.hidden_layer(x)
+        x = self.input_layer(x)
+        x = self.relu(x)
+        x = self.hidden_layer_1(x)
+        x = self.relu(x)
+        x = self.hidden_layer_2(x)
+        x = self.relu(x)
+        x = self.hidden_layer_3(x)
         x = self.relu(x)
         x = self.output_layer(x)
-        x = self.softmax(x)
-        return x
+        out = self.sigmoid(x)
+        return out
 
 class ProjectionHead(nn.Module):
     def __init__(
@@ -1262,5 +1272,9 @@ for sample in dd2 :
     break
 """
 
+
+# %%
+
+# %%
 
 # %%
