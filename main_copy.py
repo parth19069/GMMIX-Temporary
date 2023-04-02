@@ -1049,7 +1049,7 @@ class TextEncoder(nn.Module):
 
 class ClassificationHead2(nn.Module):
     def __init__(self, embedding_dim, metadata_dim, n_classes):
-        super(ClassificationHead, self).__init__()
+        super(ClassificationHead2, self).__init__()
         self.input_layer = nn.Linear(metadata_dim, 1)
         self.output_layer = nn.Linear(1, n_classes)
         self.softmax = nn.Softmax(dim=1)
