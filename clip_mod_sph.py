@@ -1235,7 +1235,7 @@ print("Length : ",len(trainloader))
 optimizer = torch.optim.Adam( list(clip_model.parameters()) ,lr=wandb.config.lr,betas=(0.9,0.98),eps=1e-6,weight_decay=0.2)
 scheduler = ExponentialLR(optimizer, gamma=0.9)
 
-nft_classification_optimizer = torch.optim.Adam(nft_classification_model.parameters(), lr=args.classifier_lr, eps=1e-5)
+nft_classification_optimizer = torch.optim.SGD(nft_classification_model.parameters(), lr=args.classifier_lr, weight_decay=1e-4)
 
 #Start Training Loop.
 Best_R1_sum = -1
