@@ -424,7 +424,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 # print(input_representation.shape, input_representation.dtype)
                 input_representation = input_representation.to(torch.float32)
                 y_preds = classification_model(input_representation)
-                loss_classification = torch.nn.functional.binary_cross_entropy(y_preds, torch.tensor(labels).to(device))
+                loss_classification = torch.nn.functional.cross_entropy(y_preds, torch.tensor(labels).to(device))
                 
                 
         temp_num_iters += 1
@@ -846,10 +846,14 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
             #     print("------------- 10 iters testing done ----------------")
             #     break
         # test_loss /= len(validloader.dataset)
+        # threshold = torch.tensor([0.5])
         pred_list = torch.cat(price_movement_preds)
+        # pred_list = (pred_list > threshold).float()*1
+        print(f"predictions = {pred_list}")
         y_true = torch.cat(y_true)
         print(f"before Preds shape : {pred_list.shape}")
         pred_list = torch.argmax(pred_list, axis = 1)
+        print(f"predictions = {pred_list}")
         print(f"after Preds shape : {pred_list.shape}")
         print(f"y_true tensor shape : {y_true.shape}")
         
@@ -859,6 +863,7 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
         m_corr = matthews_corrcoef(y_true, pred_list)
         precision = precision_score(y_true, pred_list)
         recall = recall_score(y_true, pred_list)
+        f1 = f1_score(y_true, pred_list)
         
         print(f"type, len : {type(y_true)}, {y_true.shape}")
         final_acc = (y_true == pred_list).sum() / len(y_true)
@@ -866,6 +871,8 @@ def do_classifier_test(validloader,clip_model,optimizer,args,classifier_model, r
         print(f"m_corr = {m_corr}")
         print(f"precision = {precision}")
         print(f"recall = {recall}")
+        print(f"f1 = {f1}")
+        print(f"Classification report:\n {classification_report(y_true, pred_list)}")
             
             
             
@@ -1031,9 +1038,9 @@ class ClassificationHead(nn.Module):
         self.hidden_layer_1 = nn.Linear(512, 256)
         self.hidden_layer_2 = nn.Linear(256, 128)
         self.hidden_layer_3 = nn.Linear(128, 64)
-        self.output_layer = nn.Linear(64, 1)
-        # self.softmax = nn.Softmax(dim=1)
-        self.sigmoid = nn.Sigmoid()
+        self.output_layer = nn.Linear(64, n_classes)
+        self.softmax = nn.Softmax(dim=1)
+        # self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
     
     def forward(self, x):
@@ -1046,7 +1053,7 @@ class ClassificationHead(nn.Module):
         x = self.hidden_layer_3(x)
         x = self.relu(x)
         x = self.output_layer(x)
-        out = self.sigmoid(x)
+        out = self.softmax(x)
         return out
 
 class ProjectionHead(nn.Module):
