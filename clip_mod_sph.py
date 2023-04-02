@@ -7,7 +7,7 @@ import wandb
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--img_lookback',type=int,default=10,help="image lookback")
+parser.add_argument('--img_lookback',type=int,default=5,help="image lookback")
 parser.add_argument('--text_lookback', type=int, default=10,help="text lookback")
 parser.add_argument('--startlr',type=float,default=7e-6,help="initial learning rate")
 parser.add_argument('--lr',type=float,default=1e-6,help="initial learning rate")
