@@ -158,11 +158,23 @@ class NFTDataset(torch.utils.data.Dataset):
                 
         elif len(tweets_tmp) == 0:
             tweets_txt = ['' for i in range(self.tweet_lookback)]
+            metadata = [0 for i in range(self.tweet_lookback)]
         else:
             pad_len = self.tweet_lookback - len(tweets_tmp)
             tweets_txt = tweets_tmp['preprocessed'].to_list()
+            
+            for idx, row in tweets_tmp[:self.tweet_lookback].iterrows():          
+                if row.polarity == 0:
+                    met = (1e-2*(row.LikeCount + row.RetweetCount))
+                else:
+                    met = (row.polarity*(row.LikeCount + row.RetweetCount))
+                if(idx == 0):
+                    row0_meta = met
+                metadata.append(met)
+                
             for i in range(pad_len):
                 tweets_txt.append(txt_list[0])
+                metadata.append(row0_meta)
  
         transactions_tmp = self.transactions_df[
             (self.transactions_df['project'] == transaction_project) & (self.transactions_df['block_timestamp'] < transaction_timestamp) 
