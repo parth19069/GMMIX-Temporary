@@ -159,6 +159,8 @@ class NFTDataset(torch.utils.data.Dataset):
             ascending=False
         ).reset_index(drop=True)
         
+        list_token_img = transactions_tmp['valid_token_img'].to_list()
+        
         if len(transactions_tmp) > self.image_lookback:
             images_trans = transactions_tmp[:self.image_lookback]['valid_token_img'].to_list()
         elif len(transactions_tmp) == 0:
@@ -167,7 +169,7 @@ class NFTDataset(torch.utils.data.Dataset):
             pad_len = self.image_lookback - len(transactions_tmp)
             images_trans = transactions_tmp['valid_token_img'].to_list()
             for i in range(pad_len):
-                images_trans.append(transactions_tmp.iloc[0:1]['valid_token_img'])
+                images_trans.append(list_token_img[0])
         print(images_trans)
         images = []
         for image_name in images_trans:
