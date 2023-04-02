@@ -1031,7 +1031,7 @@ class ClassificationHead(nn.Module):
         self.hidden_layer_1 = nn.Linear(512, 256)
         self.hidden_layer_2 = nn.Linear(256, 128)
         self.hidden_layer_3 = nn.Linear(128, 64)
-        self.output_layer = nn.Linear(64, n_classes)
+        self.output_layer = nn.Linear(64, 1)
         # self.softmax = nn.Softmax(dim=1)
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
