@@ -156,7 +156,7 @@ class NFTDataset(torch.utils.data.Dataset):
             (self.transactions_df['project'] == transaction_project) & (self.transactions_df['block_timestamp'] < transaction_timestamp) 
         ].sort_values(
             by=['block_timestamp'],
-            asceding=False
+            ascending=False
         ).reset_index(drop=True)
         
         if len(transactions_tmp) > self.image_lookback:
