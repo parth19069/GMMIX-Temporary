@@ -228,7 +228,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
         
         image_features = image_features.reshape((args.bs, args.img_lookback, 512))
         text_features = text_features.reshape((args.bs, args.text_lookback, 512))
-        metadata_features = torch.Tensor(np.array(metadata)).reshape((args.bs, args.text_lookback, 1))
+        metadata_features = (torch.Tensor(np.array(metadata)).reshape((args.bs, args.text_lookback, 1))).to(device)
 
         image_features = torch.mean(image_features, dim=1)
         text_features = torch.mean(text_features, dim=1)
