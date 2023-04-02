@@ -426,7 +426,8 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 # print(input_representation.shape, input_representation.dtype)
                 input_representation = input_representation.to(torch.float32)
                 y_preds = classification_model(input_representation)
-                loss_classification = torch.nn.functional.cross_entropy(y_preds, torch.tensor(labels).to(device))
+                loss_classification = torch.nn.CrossEntropyLoss(y_preds, torch.tensor(labels).to(device))
+                # loss_classification = torch.nn.functional.cross_entropy(y_preds, torch.tensor(labels).to(device))
                 
                 
         temp_num_iters += 1
@@ -1063,7 +1064,8 @@ class ClassificationHead(nn.Module):
         x = self.hidden_layer_3(x)
         x = self.relu(x)
         x = self.output_layer(x)
-        out = self.softmax(x)
+        # out = self.softmax(x)
+        out = x
         return out
 
 class ProjectionHead(nn.Module):
