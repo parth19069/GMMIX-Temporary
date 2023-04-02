@@ -179,7 +179,7 @@ class NFTDataset(torch.utils.data.Dataset):
             images.append(torch.Tensor(img))
         
         if len(images) == 0:
-            images = [torch.zeros(224, 224) for i in range(self.image_lookback)]
+            images = [torch.zeros(3, 224, 224) for i in range(self.image_lookback)]
         
         return images, tweets_txt, transaction_item['label']
         
