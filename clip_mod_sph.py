@@ -1266,8 +1266,8 @@ for epoch in range(wandb.config.epoch):
     # wandb.log({"R1_Sum":R1Sum})
     torch.save({
         'model_state_dict': clip_model.state_dict(),
-    }, f"/scratch/puneetm2/data/models/clip_mod_sph_weight_{epoch}.pt")
-    torch.save(nft_classification_model.state_dict(), f"/scratch/puneetm2/data/models/nft_classification_model_{epoch}.pt")
+    }, f"/scratch/puneetm2/data/models/text_clip_mod_sph_weight_{epoch}.pt")
+    torch.save(nft_classification_model.state_dict(), f"/scratch/puneetm2/data/models/text_nft_classification_model_{epoch}.pt")
     
     scheduler.step()
 # wandb.log({"Best_R1_Sum" : Best_R1_sum})
@@ -1276,9 +1276,9 @@ for epoch in range(wandb.config.epoch):
 
 torch.save({
         'model_state_dict': clip_model.state_dict(),
-    }, f"clip_mod_sph_weight.pt") #just change to your preferred folder/filename
+    }, f"/scratch/puneetm2/data/models/text_clip_mod_sph_weight.pt") #just change to your preferred folder/filename
 
-torch.save(nft_classification_model.state_dict(), "/scratch/puneetm2/data/models/nft_classification_model.pt")
+torch.save(nft_classification_model.state_dict(), "/scratch/puneetm2/data/models/text_nft_classification_model.pt")
 
 
 
