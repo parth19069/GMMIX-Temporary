@@ -12,7 +12,7 @@ parser.add_argument('--text_lookback', type=int, default=10,help="text lookback"
 parser.add_argument('--startlr',type=float,default=7e-6,help="initial learning rate")
 parser.add_argument('--lr',type=float,default=1e-6,help="initial learning rate")
 parser.add_argument('--classifier_lr', type=float,default=1e-3,help="classifier initial learning rate")
-parser.add_argument('--bs',type=int,default=8,help="Batch size")
+parser.add_argument('--bs',type=int,default=16,help="Batch size")
 parser.add_argument('--epoch',type=int,default=10,help="Epoch")
 parser.add_argument('--group',  help="run Group",default="SWSW")
 parser.add_argument('--input_img', help="run Group", action="store_true")
