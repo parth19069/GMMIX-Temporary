@@ -7,11 +7,11 @@ import wandb
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--img_lookback',type=int,default=5,help="image lookback")
-parser.add_argument('--text_lookback', type=int, default=5,help="text lookback")
+parser.add_argument('--img_lookback',type=int,default=10,help="image lookback")
+parser.add_argument('--text_lookback', type=int, default=10,help="text lookback")
 parser.add_argument('--startlr',type=float,default=7e-6,help="initial learning rate")
 parser.add_argument('--lr',type=float,default=1e-6,help="initial learning rate")
-parser.add_argument('--classifier_lr', type=float,default=1e-4,help="classifier initial learning rate")
+parser.add_argument('--classifier_lr', type=float,default=1e-3,help="classifier initial learning rate")
 parser.add_argument('--bs',type=int,default=16,help="Batch size")
 parser.add_argument('--epoch',type=int,default=10,help="Epoch")
 parser.add_argument('--group',  help="run Group",default="SWSW")
@@ -112,7 +112,7 @@ from loss import *
 
 import pandas as pd
 from tqdm import tqdm
-from sklearn.metrics import matthews_corrcoef, f1_score, recall_score, precision_score
+from sklearn.metrics import matthews_corrcoef, f1_score, recall_score, precision_score, classification_report
 
 torch.cuda.empty_cache()
 
@@ -177,14 +177,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
         print(f'\nTime taken to load batch: {end_time - start_time}')
         print("Inside batch")
         images, text_tok, labels    = sample
-        # print(f"len sample : {len(sample)}")
-        # print(text_tok)
-        # print(f"data-> img = {len(images)}, test_tok={len(text_tok)}, label={len(labels)}")
         captions=text_tok
-        
-        # # print(text_tok)
-        # # print(labels)
-        # print(images)
         try:
             temp_img = np.array(images)
             assert(temp_img.shape[1] != 0)
@@ -1182,8 +1175,8 @@ elif args.dataset == "coco" :
     testset     = COCODataset('/data/coco/images/val2017',anon_path='/data/coco/images/annotations/captions_val2017.json',transform=preprocess)
 
 if args.dataset == "nft":
-    trainset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess).filter_df("train")
-    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data/full_tweet_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess).filter_df("test")
+    trainset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data_updated/final_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess).filter_df("train")
+    testset = NFTDataset(folder_path = '/scratch/puneetm2/data/nft_data_updated/final_data', image_folder_path='/scratch/puneetm2/data/nft_data',image_lookback=args.img_lookback, tweet_lookback=args.text_lookback, transform=preprocess).filter_df("test")
     # validset = 
 
 

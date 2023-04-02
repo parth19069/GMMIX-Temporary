@@ -105,22 +105,19 @@ class NFTDataset(torch.utils.data.Dataset):
         print("Init dataset")
         self.verbose = verbose
         self.folder_path = folder_path
-        self.transactions_df = pd.read_csv(os.path.join(self.folder_path, 'new_filtered_transactions.csv'))
-        self.tweets_data = pd.read_csv(os.path.join(self.folder_path, 'final_tweet_data_full.csv')).dropna(axis=0)
-        self.images_path = os.path.join(image_folder_path, 'images')
+        self.transactions_df = pd.read_csv(os.path.join(self.folder_path, 'final_price_movement.csv'))
+        self.tweets_data = pd.read_csv(os.path.join(self.folder_path, 'final_tweet_data.csv')).dropna(axis=0)
+        self.images_path = os.path.join(image_folder_path, 'updated_images')
         self.image_lookback = image_lookback
         self.tweet_lookback = tweet_lookback
-        self.images_tensor = torch.load('/scratch/puneetm2/data/nft_data/full_tweet_data/all_images_tensor.pt')
         self.project_mapping = {'CyberKongz':'KONGZ', 
                                 'CrypToadz by GREMPLIN': 'TOADZ',
-                                'Loot': 'LOOT',
                                 'Cool Cats NFT': 'COOL',
                                 'World of Women': 'WOW',
                                 'BAYC': 'BAYC',
                                 'MAYC': 'MAYC',
                                 'FLUF World': 'FLUF',
                                 'Pudgy Penguins': 'PPG'}
-        self.transactions_df = self.transactions_df.loc[self.transactions_df['project'].isin(list(self.project_mapping.keys()))]
         if transform == None :
             self.transform = transforms.Compose([
                 transforms.Resize(32),
@@ -134,84 +131,57 @@ class NFTDataset(torch.utils.data.Dataset):
         return int(len(self.transactions_df))
     
     def __getitem__(self, idx):
+        
         transaction_item = self.transactions_df.iloc[idx, :]
-        project = transaction_item['project']
-        
-        project_tweets = self.tweets_data[self.tweets_data['project'] == project]
+        transaction_project = transaction_item['project']
         transaction_timestamp = transaction_item['block_timestamp']
-        bisect_idx = bisect.bisect_left(project_tweets['datetime'].to_list(), transaction_timestamp)
+        tweets_tmp = self.tweets_data[
+            (self.tweets_data['project'] == transaction_project) & (self.tweets_data['Datetime'] < transaction_timestamp)
+        ].sort_values(
+            by=['Datetime', 'LikeCount', 'RetweetCount'],
+            ascending=False
+        ).reset_index(drop=True)
         
-        # tweets_records_list = self.tweets_data.iloc[max(0, bisect_idx - self.tweet_lookback):bisect_idx, :].to_dict('records')
-        tweets_text = self.tweets_data.iloc[max(0, bisect_idx - self.tweet_lookback):bisect_idx]['text'].to_list()
+        if len(tweets_tmp) > self.tweet_lookback:
+            tweets_txt = tweets_tmp[:self.tweet_lookback]['preprocessed'].to_list()
+        elif len(tweets_tmp) == 0:
+            tweets_txt = ['' for i in range(self.tweet_lookback)]
+        else:
+            pad_len = self.tweet_lookback - len(tweets_tmp)
+            tweets_txt = tweets_tmp['preprocessed'].to_list()
+            for i in range(pad_len):
+                tweets_txt.append(tweets_tmp.iloc[0:1]['preprocessed'])
+ 
+        transactions_tmp = self.transactions_df[
+            (self.transactions_df['project'] == transaction_project) & (self.transactions_df['block_timestamp'] < transaction_timestamp) 
+        ].sort_values(
+            by=['block_timestamp'],
+            asceding=False
+        ).reset_index(drop=True)
         
-        
-        project_transactions = self.grouped_and_sorted_transactions_df[self.grouped_and_sorted_transactions_df['project'] == project]
-        bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
-        # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
-        all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['valid_token_ids']
-        # all_previous_transactions_list = project_transactions.iloc[:bisect_idx_transactions]
-        # print(f"\nGropued shape : {self.grouped_and_sorted_transactions_df.shape}, proj = {project_transactions.shape}")
-        # print(all_previous_transactions_list.shape)
-        # project_transactions = self.transactions_df[self.transactions_df['project'] == project].sort_values(by='block_timestamp')
-        # bisect_idx_transactions = bisect.bisect_left(project_transactions['block_timestamp'].to_list(), transaction_timestamp)
-        # # transactions_list = project_transactions[max(0, bisect_idx_transactions - self.image_lookback):bisect_idx_transactions]['token_ids']
-        # all_previous_transactions_list = project_transactions[:bisect_idx_transactions]['token_ids']
-        
-        
-        # images = []
-        # num_images = 0
-        # for t_idx, transaction in all_previous_transactions_list.iloc[::-1].iterrows():
-        #     if(num_images < self.image_lookback):
-        #         # print(transaction)
-        #         # print(transaction['img_tensor_index'], type(transaction['img_tensor_index']))
-        #         image_tensor_idx = int(transaction['img_tensor_index'])
-        #         img = self.images_tensor[image_tensor_idx]
-        #         # print(f"Image shape : {img.shape}")
-        #         images.append(img)
-        #         num_images += 1
-        #     else:
-        #         break
-        
-        
-        # print(f"Image list length : {len(images)}")
-        
+        if len(transactions_tmp) > self.image_lookback:
+            images_trans = transactions_tmp[:self.image_lookback]['valid_token_img'].to_list()
+        elif len(transactions_tmp) == 0:
+            images_trans = []
+        else:
+            pad_len = self.image_lookback - len(transactions_tmp)
+            images_trans = transactions_tmp['valid_token_img'].to_list()
+            for i in range(pad_len):
+                images_trans.append(transactions_tmp.iloc[0:1]['valid_token_img'])
         images = []
-        num_images = 0
-        # start_time = time.time()
-        for token_ids_list in all_previous_transactions_list[::-1]:
-            if(num_images < self.image_lookback):
-                image_ids_list = ast.literal_eval(token_ids_list)
-                for image_id in image_ids_list:
-                    img_name = self.project_mapping[str(project)] + '_' + str(image_id) + '.png'
-
-                    if os.path.exists(os.path.join(self.images_path, img_name)):
-                        img = Image.open(os.path.join(self.images_path, img_name))
-                        img = self.transform(img)
-                        images.append(torch.Tensor(img))
-                        num_images += 1
-                        break
-                    else:
-                        if self.verbose:
-                            print(img_name)
-            else:
-                break
+        for image_name in images_trans:
+            img = Image.open(os.path.join(self.images_path, image_name))
+            img = self.transform(img)
+            images.append(torch.Tensor(img))
         
+        if len(images) == 0:
+            images = [torch.zeros(224, 224) for i in range(self.image_lookback)]
         
-        # end_time = time.time()
-        # print(f"\nTime taken to load image = {end_time - start_time}\n")
-        return images, tweets_text, transaction_item['label']
+        return images, tweets_txt, transaction_item['label']
         
     def filter_df(self, name):
         
         self.transactions_df = self.transactions_df[self.transactions_df['type'] == name]
         self.tweets_data = self.tweets_data[self.tweets_data['type'] == name]
 
-        projects, counts = np.unique(self.transactions_df['project'].to_numpy(), return_counts=True)
-        transactions_dfs = []
-        for proj in projects:
-            project_transactions = self.transactions_df[self.transactions_df['project'] == proj]
-            project_transactions = project_transactions.sort_values(by='block_timestamp')
-            transactions_dfs.append(project_transactions)
-        self.grouped_and_sorted_transactions_df = pd.concat(transactions_dfs, ignore_index=True)
-        
         return self
