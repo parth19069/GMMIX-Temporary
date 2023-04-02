@@ -150,64 +150,65 @@ class NFTDataset(torch.utils.data.Dataset):
         
         if len(tweets_tmp) > self.tweet_lookback:
             tweets_txt = tweets_tmp[:self.tweet_lookback]['preprocessed'].to_list()
-            # for idx, row in tweets_tmp[:self.tweet_lookback].iterrows():
-            #     if row.polarity == 0:
-            #         metadata.append(1e-2*(row.LikeCount + row.RetweetCount))
-            #     else:
-            #         metadata.append(row.polarity*(row.LikeCount + row.RetweetCount))
+            for idx, row in tweets_tmp[:self.tweet_lookback].iterrows():
+                if row.polarity == 0:
+                    metadata.append(1e-2*(row.LikeCount + row.RetweetCount))
+                else:
+                    metadata.append(row.polarity*(row.LikeCount + row.RetweetCount))
                 
         elif len(tweets_tmp) == 0:
             tweets_txt = ['' for i in range(self.tweet_lookback)]
-            # metadata = [0 for i in range(self.tweet_lookback)]
+            metadata = [0 for i in range(self.tweet_lookback)]
         else:
             pad_len = self.tweet_lookback - len(tweets_tmp)
             tweets_txt = tweets_tmp['preprocessed'].to_list()
             
-            # for idx, row in tweets_tmp[:self.tweet_lookback].iterrows():          
-            #     if row.polarity == 0:
-            #         met = (1e-2*(row.LikeCount + row.RetweetCount))
-            #     else:
-            #         met = (row.polarity*(row.LikeCount + row.RetweetCount))
-            #     if(idx == 0):
-            #         row0_meta = met
-            #     metadata.append(met)
+            for idx, row in tweets_tmp[:self.tweet_lookback].iterrows():          
+                if row.polarity == 0:
+                    met = (1e-2*(row.LikeCount + row.RetweetCount))
+                else:
+                    met = (row.polarity*(row.LikeCount + row.RetweetCount))
+                if(idx == 0):
+                    row0_meta = met
+                metadata.append(met)
                 
             for i in range(pad_len):
                 tweets_txt.append(txt_list[0])
-                # metadata.append(row0_meta)
+                metadata.append(row0_meta)
  
-        # transactions_tmp = self.transactions_df[
-        #     (self.transactions_df['project'] == transaction_project) & (self.transactions_df['block_timestamp'] < transaction_timestamp) 
-        # ].sort_values(
-        #     by=['block_timestamp'],
-        #     ascending=False
-        # ).reset_index(drop=True)
+        transactions_tmp = self.transactions_df[
+            (self.transactions_df['project'] == transaction_project) & (self.transactions_df['block_timestamp'] < transaction_timestamp) 
+        ].sort_values(
+            by=['block_timestamp'],
+            ascending=False
+        ).reset_index(drop=True)
         
-        # list_token_img = transactions_tmp['valid_token_img'].to_list()
+        list_token_img = transactions_tmp['valid_token_img'].to_list()
         
-        # if len(transactions_tmp) > self.image_lookback:
-        #     images_trans = transactions_tmp[:self.image_lookback]['valid_token_img'].to_list()
-        # elif len(transactions_tmp) == 0:
-        #     images_trans = []
-        # else:
-        #     pad_len = self.image_lookback - len(transactions_tmp)
-        #     images_trans = transactions_tmp['valid_token_img'].to_list()
-        #     for i in range(pad_len):
-        #         images_trans.append(list_token_img[0])
-        # # print(images_trans)
-        # images = []
-        # for image_name in images_trans:
-        #     # print(f"Image name = {image_name}")
-        #     img = Image.open(os.path.join(self.images_path, image_name))
-        #     img = self.transform(img)
-        #     images.append(torch.Tensor(img))
+        if len(transactions_tmp) > self.image_lookback:
+            images_trans = transactions_tmp[:self.image_lookback]['valid_token_img'].to_list()
+        elif len(transactions_tmp) == 0:
+            images_trans = []
+        else:
+            pad_len = self.image_lookback - len(transactions_tmp)
+            images_trans = transactions_tmp['valid_token_img'].to_list()
+            for i in range(pad_len):
+                images_trans.append(list_token_img[0])
+        # print(images_trans)
+        images = []
+        for image_name in images_trans:
+            # print(f"Image name = {image_name}")
+            img = Image.open(os.path.join(self.images_path, image_name))
+            img = self.transform(img)
+            images.append(torch.Tensor(img))
         
-        # if len(images) == 0:
-        #     images = [torch.zeros(3, 224, 224) for i in range(self.image_lookback)]
+        if len(images) == 0:
+            images = [torch.zeros(3, 224, 224) for i in range(self.image_lookback)]
         
-        images = [torch.zeros(3, 224, 224) for i in range(self.image_lookback)]
-        return images, tweets_txt, transaction_item['label']
-        # return images, tweets_txt, metadata, transaction_item['label']
+        # images = [torch.zeros(3, 224, 224) for i in range(self.image_lookback)]
+        # return images, tweets_txt, transaction_item['label']
+        
+        return images, tweets_txt, metadata, transaction_item['label']
         
     def filter_df(self, name):
         
