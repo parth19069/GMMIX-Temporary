@@ -142,6 +142,8 @@ class NFTDataset(torch.utils.data.Dataset):
             ascending=False
         ).reset_index(drop=True)
         
+        txt_list = tweets_tmp[:self.tweet_lookback]['preprocessed'].to_list()
+        
         if len(tweets_tmp) > self.tweet_lookback:
             tweets_txt = tweets_tmp[:self.tweet_lookback]['preprocessed'].to_list()
         elif len(tweets_tmp) == 0:
@@ -150,7 +152,7 @@ class NFTDataset(torch.utils.data.Dataset):
             pad_len = self.tweet_lookback - len(tweets_tmp)
             tweets_txt = tweets_tmp['preprocessed'].to_list()
             for i in range(pad_len):
-                tweets_txt.append(tweets_tmp.iloc[0:1]['preprocessed'])
+                tweets_txt.append(txt_list[0])
  
         transactions_tmp = self.transactions_df[
             (self.transactions_df['project'] == transaction_project) & (self.transactions_df['block_timestamp'] < transaction_timestamp) 
