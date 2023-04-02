@@ -1179,16 +1179,19 @@ for n,p in clip_model.named_parameters():
 """
 
 def custom_collate(list_items):
-     x = []
-     y = []
-     z = []
-     for x_, y_, z_ in list_items:
-        #  print(f'x_={x_}, y_={y_}')
-         x.append(x_)
-         y.append(y_)
-         z.append(z_)
-         
-     return x, y, z
+    
+    w = []
+    x = []
+    y = []
+    z = []
+    for w_, x_, y_, z_ in list_items:
+    #  print(f'x_={x_}, y_={y_}')
+        w.append(w_)
+        x.append(x_)
+        y.append(y_)
+        z.append(z_)
+        
+    return w, x, y, z
 
 
 if args.dataset == "flickr" :
