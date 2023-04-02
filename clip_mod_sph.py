@@ -426,6 +426,7 @@ def do_train(trainloader,clip_model,optimizer,epoch,args,classification_model=No
                 # print(input_representation.shape, input_representation.dtype)
                 input_representation = input_representation.to(torch.float32)
                 y_preds = classification_model(input_representation)
+                print(f"preds = {y_preds.shape}, target = {(torch.tensor(labels).to(device)).shape}")
                 loss_classification = torch.nn.CrossEntropyLoss(y_preds, torch.tensor(labels).to(device))
                 # loss_classification = torch.nn.functional.cross_entropy(y_preds, torch.tensor(labels).to(device))
                 
