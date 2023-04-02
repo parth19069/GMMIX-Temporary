@@ -107,7 +107,7 @@ from ALBEF.models.vit import interpolate_pos_embed
 import matplotlib.pyplot as plt
 
 from utils import *
-from dataset import COCODataset, FlickerDataset, NFTDataset
+from dataset_copy import COCODataset, FlickerDataset, NFTDataset
 
 import math
 from loss import *
